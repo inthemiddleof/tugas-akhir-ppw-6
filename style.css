@@ -1,0 +1,73 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+body {
+  font-family: "Inter", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.fade-in {
+  animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.temp-track {
+  background-color: #f1f5f9;
+  border-radius: 999px;
+  height: 6px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+.dark .temp-track {
+  background-color: #334155;
+}
+
+.temp-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #60a5fa, #f43f5e);
+}
+
+.weather-icon-lg {
+  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.15));
+  transition: transform 0.3s ease;
+}
+.weather-icon-lg:hover {
+  transform: scale(1.05) translate(1rem, -1rem);
+}
+
+.icon-pop {
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.15));
+}
+
+.dark .weather-icon-lg,
+.dark .icon-pop {
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+}

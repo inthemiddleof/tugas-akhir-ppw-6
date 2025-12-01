@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="id" class="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cuaca</title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              bgLight: "#f8fafc",
+              bgDark: "#0f172a",
+              cardLight: "#ffffff",
+              cardDark: "#1e293b",
+              borderLight: "#e2e8f0",
+              borderDark: "#334155",
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body
+    class="bg-bgLight text-slate-800 dark:bg-bgDark dark:text-slate-100 transition-colors duration-300 overflow-hidden"
+  >
+    <div class="flex h-screen w-full relative">
+      <aside
+        id="sidebar"
+        class="absolute md:relative inset-y-0 left-0 z-50 w-64 bg-cardLight dark:bg-cardDark border-r border-borderLight dark:border-borderDark transform -translate-x-full md:translate-x-0 transition-transform duration-300 flex flex-col h-full shadow-2xl md:shadow-none"
+      >
+        <div
+          class="h-16 flex items-center justify-between px-6 border-b border-borderLight dark:border-borderDark"
+        >
+          <div class="flex items-center">
+            <div
+              class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white mr-3"
+            >
+              <i class="ph-bold ph-cloud"></i>
+            </div>
+            <span class="text-lg font-bold tracking-tight">Cuaca</span>
+          </div>
+          <button
+            id="close-sidebar"
+            class="md:hidden text-slate-500 hover:text-slate-800 dark:hover:text-white"
+          >
+            <i class="ph-bold ph-x text-xl"></i>
+          </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto py-6 px-4 space-y-6">
+          <div>
+            <p
+              class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 px-2"
+            >
+              Lokasi Utama
+            </p>
+            <div id="default-city-list" class="space-y-1"></div>
+          </div>
+
+          <div>
+            <p
+              class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 px-2"
+            >
+              Kota Besar
+            </p>
+            <div id="popular-cities" class="space-y-1"></div>
+          </div>
+
+          <div>
+            <p
+              class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 px-2"
+            >
+              Favorit Saya
+            </p>
+            <div id="saved-cities" class="space-y-1"></div>
+          </div>
+        </div>
+
+        <div class="p-4 border-t border-borderLight dark:border-borderDark">
+          <button
+            id="theme-toggle"
+            class="flex items-center gap-3 w-full p-2.5 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition text-sm font-medium text-slate-600 dark:text-slate-300"
+          >
+            <i class="ph ph-moon text-lg"></i> <span>Mode Gelap</span>
+          </button>
+        </div>
+      </aside>
+
+      <div
+        id="sidebar-overlay"
+        class="fixed inset-0 bg-black/50 z-40 hidden md:hidden backdrop-blur-sm"
+      ></div>
+
+      <main class="flex-1 flex flex-col h-screen overflow-hidden relative">
+        <header
+          class="h-16 border-b border-borderLight dark:border-borderDark bg-cardLight dark:bg-cardDark flex items-center justify-between px-4 lg:px-6 z-10 gap-4"
+        >
+          <button
+            id="open-sidebar"
+            class="md:hidden p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg"
+          >
+            <i class="ph-bold ph-list text-2xl"></i>
+          </button>
+
+          <div class="relative flex-1 max-w-md group">
+            <i
+              class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg group-focus-within:text-blue-500 transition-colors"
+            ></i>
+            <input
+              type="text"
+              id="city-input"
+              placeholder="Cari kota..."
+              class="w-full bg-slate-100 dark:bg-[#28344b] border border-transparent dark:border-slate-700/50 rounded-xl py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none transition-all placeholder-slate-500 text-slate-700 dark:text-slate-200"
+            />
+            <ul
+              id="suggestions"
+              class="absolute top-[calc(100%+0.5rem)] left-0 w-full bg-white dark:bg-cardDark shadow-xl border border-borderLight dark:border-borderDark rounded-xl hidden z-50 overflow-hidden"
+            ></ul>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div
+              class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-lg border border-borderLight dark:border-borderDark"
+            >
+              <button
+                id="btn-c"
+                class="px-3 py-1 rounded-md text-xs font-bold transition shadow-sm bg-white dark:bg-slate-600 text-slate-800 dark:text-white"
+              >
+                °C
+              </button>
+              <button
+                id="btn-f"
+                class="px-3 py-1 rounded-md text-xs font-medium transition text-slate-500 hover:text-slate-800 dark:hover:text-white"
+              >
+                °F
+              </button>
+            </div>
+
+            <button
+              id="refresh-btn"
+              class="w-8 h-8 rounded-lg bg-slate-900 text-white dark:bg-white dark:text-slate-900 flex items-center justify-center hover:opacity-90 transition shadow-lg shadow-slate-500/20"
+            >
+              <i class="ph-bold ph-arrows-clockwise"></i>
+            </button>
+          </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-4 lg:p-8 scrollbar-hide">
+          <div
+            id="loader"
+            class="hidden h-full flex items-center justify-center"
+          >
+            <i
+              class="ph-bold ph-spinner animate-spin text-3xl text-blue-500"
+            ></i>
+          </div>
+          <div
+            id="weather-content"
+            class="hidden max-w-6xl mx-auto space-y-6 fade-in"
+          >
+            <div
+              class="flex flex-col md:flex-row justify-between items-start md:items-end gap-2"
+            >
+              <div>
+                <h1
+                  id="city-name"
+                  class="text-2xl md:text-3xl font-bold tracking-tight mb-1"
+                >
+                  --
+                </h1>
+                <p id="timestamp" class="text-slate-500 text-sm">--</p>
+              </div>
+              <button
+                id="fav-btn"
+                class="flex items-center gap-2 px-4 py-2 rounded-lg border border-borderLight dark:border-borderDark hover:bg-white dark:hover:bg-slate-700 transition text-sm font-medium"
+              >
+                <i id="fav-icon" class="ph ph-star text-lg"></i> Simpan
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div
+                class="lg:col-span-2 bg-cardLight dark:bg-cardDark rounded-xl border border-borderLight dark:border-borderDark p-6 md:p-8 flex flex-col justify-between min-h-[18rem] md:h-72 shadow-sm relative overflow-hidden"
+              >
+                <div
+                  class="flex flex-col md:flex-row justify-between items-start md:items-start z-10 h-full gap-4"
+                >
+                  <div class="flex flex-col justify-between h-full w-full">
+                    <span
+                      id="weather-desc"
+                      class="inline-block px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-700 text-xs font-semibold uppercase tracking-wider mb-2 w-fit"
+                      >--</span
+                    >
+                    <div>
+                      <div class="flex items-start">
+                        <span
+                          id="temp-val"
+                          class="text-7xl md:text-8xl font-bold tracking-tighter text-slate-900 dark:text-white"
+                          >--</span
+                        ><span class="text-3xl mt-2 text-slate-400">°</span>
+                      </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 mt-4 md:flex md:gap-8">
+                      <div>
+                        <p class="text-[10px] text-slate-400 mb-1">Angin</p>
+                        <p
+                          class="font-bold text-xs md:text-sm flex items-center gap-1"
+                        >
+                          <i class="ph-fill ph-wind text-blue-500"></i>
+                          <span id="wind-val">--</span>
+                        </p>
+                      </div>
+                      <div>
+                        <p class="text-[10px] text-slate-400 mb-1">Lembab</p>
+                        <p
+                          class="font-bold text-xs md:text-sm flex items-center gap-1"
+                        >
+                          <i class="ph-fill ph-drop text-cyan-500"></i>
+                          <span id="humid-val">--</span>
+                        </p>
+                      </div>
+                      <div>
+                        <p class="text-[10px] text-slate-400 mb-1">UV Index</p>
+                        <p
+                          class="font-bold text-xs md:text-sm flex items-center gap-1"
+                        >
+                          <i class="ph-fill ph-sun text-orange-500"></i>
+                          <span id="uv-val">--</span>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <img
+                    id="main-icon"
+                    src=""
+                    alt="icon"
+                    class="w-32 h-32 md:w-48 md:h-48 object-contain weather-icon-lg self-end md:self-auto transform md:translate-x-4 md:-translate-y-4"
+                  />
+                </div>
+              </div>
+              <div
+                class="bg-cardLight dark:bg-cardDark rounded-xl border border-borderLight dark:border-borderDark flex flex-col shadow-sm h-64 md:h-72 overflow-hidden"
+              >
+                <div
+                  class="px-5 py-3 border-b border-borderLight dark:border-borderDark bg-slate-50 dark:bg-slate-900/50"
+                >
+                  <h3
+                    class="text-xs font-bold uppercase tracking-widest text-slate-500"
+                  >
+                    Per Jam
+                  </h3>
+                </div>
+                <div
+                  id="hourly-list"
+                  class="flex-1 overflow-y-auto p-2 space-y-1"
+                ></div>
+              </div>
+            </div>
+
+            <div
+              class="bg-cardLight dark:bg-cardDark rounded-xl border border-borderLight dark:border-borderDark shadow-sm overflow-hidden"
+            >
+              <div
+                class="px-6 py-4 border-b border-borderLight dark:border-borderDark"
+              >
+                <h3 class="font-bold text-slate-700 dark:text-slate-200">
+                  5 Hari Kedepan
+                </h3>
+              </div>
+              <div class="p-4 md:p-6">
+                <div
+                  class="grid grid-cols-12 gap-2 text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 px-2"
+                >
+                  <div class="col-span-3 md:col-span-2">Hari</div>
+                  <div class="col-span-3 md:col-span-2 text-center">
+                    Kondisi
+                  </div>
+                  <div class="col-span-2 md:col-span-3 text-center">Hujan</div>
+                  <div class="col-span-4 md:col-span-5 text-center">
+                    Suhu (Min/Max)
+                  </div>
+                </div>
+                <div id="forecast-list" class="space-y-2"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
