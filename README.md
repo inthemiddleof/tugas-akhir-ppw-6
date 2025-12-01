@@ -34,8 +34,8 @@
 
 ```text
 / (root)
-├── index.html      # Struktur utama halaman web
-├── style.css       # Kustomisasi CSS & animasi tambahan
-├── script.js       # Logika utama (Fetch data, Render UI, Events)
-└── README.md       # Dokumentasi proyek
+├── index.html
+├── style.css
+├── script.js
+└── README.md
 ```
